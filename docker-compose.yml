@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: journal
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest_journal
+    environment:
+      - JWT_SECRET=$JWT_SECRET
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    volumes:
+      - ./src:/app/src
+
+volumes:
+  pgdata:
